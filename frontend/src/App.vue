@@ -1,7 +1,15 @@
 <template>
   <div id="app">
-    <Chat headerMsg="This is a chat service"/>
-    <AddUser :getUserName="getUserName"/>
+    <AddUser 
+      :getUserName="getUserName" 
+      :userName="userName" 
+      :addUser="addUser" 
+      :room="room" 
+      :user="user" 
+      :onlineUserIds="onlineUserIds" 
+      :isUserExists="isUserExists"
+      :disconnect="disconnect"
+    />
   </div>
 </template>
 
@@ -15,11 +23,50 @@ export default {
     Chat,
     AddUser
   },
+  data() {
+    return {
+      userName: null,
+      user: {},
+      room: {},
+      onlineUserIds: []
+    }
+  },
   methods: {
     getUserName(name) {
-      console.log(name);
+      this.userName = name;
+    },
+    getSocket() {
+      return this.$socket;
+    },
+    addUser() {
+      this.getSocket().emit('joinRoom', {name: this.userName, id: this.$socket.id}, response => {
+        this.room = response.room;
+        this.user = response.user;
+        this.onlineUserIds = response.room.default.onlineUserIds
+      })
+    },
+    disconnect() {
+      this.$socket.emit('disconnect', () => {
+          this.user = {};
+          this.room = {};
+          this.onlineUserIds = {};
+          console.log('Quit')
+      })
     }
-  }
+  },
+  computed: {
+    isUserExists: function() {
+      if (!_.isEmpty(this.user) && !_.isEmpty(this.room)) {
+          return this.room.default.onlineUserIds.includes(this.user.id);
+      }
+      return false;
+    }
+  },
+  sockets: {
+    connect: function() {
+        console.log('Connected')
+    },
+  },
 }
 </script>
 

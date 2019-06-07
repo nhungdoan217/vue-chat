@@ -1,16 +1,24 @@
 <template>
   <div id="app">
     <Chat headerMsg="This is a chat service"/>
+    <AddUser :getUserName="getUserName"/>
   </div>
 </template>
 
 <script>
 import Chat from './components/Chat.vue'
+import AddUser from './components/AddUser.vue'
 
 export default {
   name: 'app',
   components: {
-    Chat
+    Chat,
+    AddUser
+  },
+  methods: {
+    getUserName(name) {
+      console.log(name);
+    }
   }
 }
 </script>

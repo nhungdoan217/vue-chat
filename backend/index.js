@@ -14,6 +14,9 @@ io.on('connection', (socket) => {
 
     socket.on('joinRoom', (user, ack) => {
         socket.join(room.default.id);
+        room[socket.id] = user;
+        room[socket.id].message = [];
+        console.log(room);
         if (!room.default.onlineUserIds.includes(user.id)) {
             room.default.onlineUserIds.push(socket.id);    
             room.default.onlineUsers += 1;
@@ -27,6 +30,11 @@ io.on('connection', (socket) => {
             room.default.onlineUserIds.shift(index);
         }
         console.log('Disconnected', room.default.onlineUserIds);
+    });
+
+    socket.on('sendMessage', (message, ack) => {
+        room[socket.id].message.push(message);
+        ack(room);
     })
  });
 server.listen(3000, () => {

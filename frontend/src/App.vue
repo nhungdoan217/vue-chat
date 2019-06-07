@@ -9,6 +9,8 @@
       :onlineUserIds="onlineUserIds" 
       :isUserExists="isUserExists"
       :disconnect="disconnect"
+      :sendMessage="sendMessage"
+      :messages="messages"
     />
   </div>
 </template>
@@ -28,7 +30,8 @@ export default {
       userName: null,
       user: {},
       room: {},
-      onlineUserIds: []
+      onlineUserIds: [],
+      messages: {}
     }
   },
   methods: {
@@ -46,11 +49,16 @@ export default {
       })
     },
     disconnect() {
-      this.$socket.emit('disconnect', () => {
+      this.getSocket().emit('disconnect', {}, () => {
           this.user = {};
           this.room = {};
           this.onlineUserIds = {};
-          console.log('Quit')
+      })
+    },
+    sendMessage(message) {
+      this.getSocket().emit('sendMessage', {message: message}, response => {
+        this.messages = response
+        console.log(response, this.getSocket().id);
       })
     }
   },

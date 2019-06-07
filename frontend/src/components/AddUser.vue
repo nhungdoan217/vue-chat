@@ -10,8 +10,16 @@
         </div>
     </div>
     <div v-else>
-      {{user}}
-      <button v-on:click="disconnect">I Quit!!!</button>
+      <div v-for="message in messages">
+        <div v-if="message.id !== 'default'">
+          <span>{{message.name}}: </span>
+          <span v-for="displayMessage in message.message">
+            <span>{{displayMessage.message}}</span>
+          </span>
+        </div>
+      </div>
+      <input type="text" v-model="message" placeholder="Add Message">
+      <button v-on:click="sendMessage(message)">Send Message</button>
     </div>
   </div>
 </template>
@@ -27,12 +35,15 @@ export default {
     disconnect: Function,
     onlineUserIds: Array,
     room: Object,
-    user: Object
+    user: Object,
+    sendMessage: Function,
+    messages: Array
   },
   data: function () {
     return {
         nameClone: this.userName,
-        displayComponent: true
+        displayComponent: true,
+        message: ""
     }
   },
   methods: {
